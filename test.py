@@ -6,6 +6,8 @@ import tensorflow.keras as keras
 import numpy as np
 from data import import_data
 
+model = keras.models.load_model(".\\wind_direcetion_model.h5")
+
 ########################### Data Import ###########################
 
 # data should be imported according to the below configuration of wind observation sites

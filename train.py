@@ -78,3 +78,4 @@ model = keras.Sequential(layers)
 model.compile(optimizer='Adam', loss='mae', metrics=['mean_absolute_error', 'mean_squared_error'] )
 model.fit(X_train, y_train, epochs=20)
 
+model.save(".\\wind_direction_model.h5")
