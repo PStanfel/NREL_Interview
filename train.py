@@ -1,9 +1,9 @@
-import numpy as np
+from tensorflow.keras.layers import Dense, Dropout
+from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import tensorflow.keras as keras
-from tensorflow.keras.layers import Dense, Dropout
-from sklearn.model_selection import train_test_split
+import numpy as np
 import os
 
 ########################### Data Import ###########################
@@ -64,10 +64,10 @@ shift_index = int(horizon / time_step)
 # targets are wind direction at center site
 y = row_data[1][1][:,wd_index]
 y = np.resize(y, (shape[0],1))
-# y = np.concatenate((y, np.zeros_like(y)), axis=1)
+y = np.concatenate((y, np.zeros_like(y)), axis=1)
 
-# for i in range(shape[0] - shift_index):
-#     y[i+shift_index][1] = np.std(y[i:i+shift_index][:,0])
+for i in range(shape[0] - shift_index):
+    y[i+shift_index][1] = np.std(y[i:i+shift_index][:,0])
 
 # shift data
 y = y[shift_index:]
@@ -78,14 +78,13 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
 print(np.shape(X_test))
 print(np.shape(np.transpose(X_test[0,:])))
 ########################### Model Training ###########################
-layer0 = Dense(10, input_shape=(len(indices)*len(row_data)*len(row_data[0]),), activation='tanh')
-layer1 = Dense(10, activation='relu')
-layer2 = Dense(10, activation='tanh')
-layer3 = Dense(1, activation='relu')
-layers = [layer0, layer1, layer2, layer3]
+layer0 = Dense(20, input_shape=(len(indices)*len(row_data)*len(row_data[0]),), activation='tanh')
+layer1 = Dense(20, activation='relu')
+layer2 = Dense(2, activation='relu')
+layers = [layer0, layer1, layer2]
 model = keras.Sequential(layers)
 
-model.compile(optimizer='sgd', loss='mae', metrics=['mean_absolute_error', 'mean_squared_error'] )
+model.compile(optimizer='Adam', loss='mae', metrics=['mean_absolute_error', 'mean_squared_error'] )
 
 model.fit(X_train, y_train, epochs=20)
 
