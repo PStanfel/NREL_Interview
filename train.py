@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import tensorflow.keras as keras
 import numpy as np
-from data import import_data
+from data import import_data, manipulate_data
 
 ########################### Data Import ###########################
 
@@ -31,38 +31,13 @@ wd_index = 6
 pr_index = 8
 indices = [ws_index, wd_index, pr_index]
 
-# initialize X with correct data size
-shape = np.shape(row_data[0][0])
-X = np.zeros((shape[0],1))
-
-for i in range(len(row_data)):
-    for j in range(len(row_data[i])):
-        X = np.concatenate((X, row_data[i][j][:,indices]), axis=1)
-
-# remove initialization column
-X = X[:,1:]
-
 # define time horizon in minutes
 horizon = 30
 
 # define time step in minutes
 time_step = 5
 
-# calculate indices to shift
-shift_index = int(horizon / time_step)
-
-# targets are wind direction at center site
-y = row_data[1][1][:,wd_index]
-y = np.resize(y, (shape[0],1))
-y = np.concatenate((y, np.zeros_like(y)), axis=1)
-
-for i in range(shape[0] - shift_index):
-    y[i+shift_index][1] = np.std(y[i:i+shift_index][:,0])
-
-# shift data
-y = y[shift_index:]
-
-X = X[:shape[0]-shift_index,:]
+X, y = manipulate_data(row_data, wd_index, indices, horizon, time_step)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
 
@@ -78,4 +53,4 @@ model = keras.Sequential(layers)
 model.compile(optimizer='Adam', loss='mae', metrics=['mean_absolute_error', 'mean_squared_error'] )
 model.fit(X_train, y_train, epochs=20)
 
-model.save(".\\wind_direction_model.h5")
+#model.save(".\\wind_direction_model.h5")

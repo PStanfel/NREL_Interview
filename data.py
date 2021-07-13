@@ -29,4 +29,32 @@ def import_data(row_0_path, row_1_path, row_2_path):
 
     return row_data
 
-def manipulate_data(row_data, indices, horizon, time_step):
+def manipulate_data(row_data, target_index, indices, horizon, time_step):
+    # initialize X with correct data size
+    shape = np.shape(row_data[0][0])
+    X = np.zeros((shape[0],1))
+
+    for i in range(len(row_data)):
+        for j in range(len(row_data[i])):
+            X = np.concatenate((X, row_data[i][j][:,indices]), axis=1)
+
+    # remove initialization column
+    X = X[:,1:]
+
+    # calculate indices to shift
+    shift_index = int(horizon / time_step)
+
+    # targets are wind direction at center site
+    y = row_data[1][1][:,target_index]
+    y = np.resize(y, (shape[0],1))
+    y = np.concatenate((y, np.zeros_like(y)), axis=1)
+
+    for i in range(shape[0] - shift_index):
+        y[i+shift_index][1] = np.std(y[i:i+shift_index][:,0])
+
+    # shift data
+    y = y[shift_index:]
+
+    X = X[:shape[0]-shift_index,:]
+
+    return X, y
