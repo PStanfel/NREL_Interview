@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import tensorflow.keras as keras
 import numpy as np
-import os
+from data import import_data
 
 ########################### Data Import ###########################
 
@@ -18,21 +18,11 @@ import os
 '''
 
 data_path = 'data\\'
-
 row_0_path = data_path + '6e629dbdf103136d68dfac978020d5e4\\'
 row_1_path = data_path + 'd51a8eff0736f44bcfaea7195c00a80a\\'
 row_2_path = data_path + '0fcb7c7e955e55af9376820c9ba9824f\\'
-row_paths = [row_0_path, row_1_path, row_2_path]
 
-row_0_data = []
-row_1_data = []
-row_2_data = []
-row_data = [row_0_data, row_1_data, row_2_data]
-
-# fill data using numpy arrays
-for i,row_path in enumerate(row_paths):
-    for file_name in os.scandir(row_path):
-        row_data[i].append(np.genfromtxt(file_name.path, skip_header=2, delimiter=','))
+row_data = import_data(row_0_path, row_1_path, row_2_path)
 
 ########################### Data Manipulation ###########################
 # indices 5,6, and 8 correspond to wind direction, wind speed, and pressure, respectively
@@ -75,20 +65,16 @@ y = y[shift_index:]
 X = X[:shape[0]-shift_index,:]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
-print(np.shape(X_test))
-print(np.shape(np.transpose(X_test[0,:])))
+
 ########################### Model Training ###########################
+# create neural network
 layer0 = Dense(20, input_shape=(len(indices)*len(row_data)*len(row_data[0]),), activation='tanh')
 layer1 = Dense(20, activation='relu')
 layer2 = Dense(2, activation='relu')
 layers = [layer0, layer1, layer2]
 model = keras.Sequential(layers)
 
+# compile and train model
 model.compile(optimizer='Adam', loss='mae', metrics=['mean_absolute_error', 'mean_squared_error'] )
-
 model.fit(X_train, y_train, epochs=20)
 
-test_slice = X[None, 0, :]
-
-print(model.predict(test_slice))
-print(y_test[0])
