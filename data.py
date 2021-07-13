@@ -8,11 +8,11 @@ def import_data(row_0_path, row_1_path, row_2_path):
     West to East
 
     Args:
-    row_0_path (str): Path to folder of .csv files corresponding to the furthest North row
+    row_0_path (str): Path to folder of .csv files corresponding to the furthest North row.
 
-    row_1_path (str): Path to folder of .csv files corresponding to the middle row
+    row_1_path (str): Path to folder of .csv files corresponding to the middle row.
 
-    row_2_path (str): Path to folder of .csc files corresponding to the furthest South row 
+    row_2_path (str): Path to folder of .csc files corresponding to the furthest South row. 
     '''
 
     row_paths = [row_0_path, row_1_path, row_2_path]
@@ -30,6 +30,22 @@ def import_data(row_0_path, row_1_path, row_2_path):
     return row_data
 
 def manipulate_data(row_data, target_index, indices, horizon, time_step):
+    '''
+    Manipulates data to be in correct format for model training.
+
+    Args:
+    row_data (arr): Array of arrays of row data for each of the nine sites.
+
+    target_index (int): Integer specifying which index the target (ie wind direction) is at
+        in the csv files.
+
+    indices (arr): Array of integers for selecting data from csv files.
+
+    horizon (double): Value specifying length of standard deviation window in minutes.
+
+    time_step (int): Value specifying length of time step in data in minutes.
+    '''
+    
     # initialize X with correct data size
     shape = np.shape(row_data[0][0])
     X = np.zeros((shape[0],1))
