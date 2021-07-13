@@ -6,7 +6,7 @@ import tensorflow.keras as keras
 import numpy as np
 from data import import_data
 
-model = keras.models.load_model(".\\wind_direcetion_model.h5")
+model = keras.models.load_model(".\\wind_direction_model.h5")
 
 ########################### Data Import ###########################
 
