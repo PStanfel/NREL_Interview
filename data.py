@@ -45,7 +45,7 @@ def manipulate_data(row_data, target_index, indices, horizon, time_step):
 
     time_step (int): Value specifying length of time step in data in minutes.
     '''
-    
+
     # initialize X with correct data size
     shape = np.shape(row_data[0][0])
     X = np.zeros((shape[0],1))
@@ -65,6 +65,7 @@ def manipulate_data(row_data, target_index, indices, horizon, time_step):
     y = np.resize(y, (shape[0],1))
     y = np.concatenate((y, np.zeros_like(y)), axis=1)
 
+    # calculate standard deviation using defined window
     for i in range(shape[0] - shift_index):
         y[i+shift_index][1] = np.std(y[i:i+shift_index][:,0])
 
